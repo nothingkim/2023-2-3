@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>글작성 페스티벌</title>
+</head>
+
+<body>
+
+    <ul id="posts"></ul>
+    <!-- <ul id="users"> </ul> -->
+
+</body>
+<script>
+
+    const UsersUrl = 'https://jsonplaceholder.typicode.com/users/';
+    const PostsUrl = 'https://jsonplaceholder.typicode.com/posts/';
+    const postselement = document.getElementById('posts');
+
+    (async function () {
+        let [users, posts] = await Promise.all([
+            fetch(UsersUrl).then(res => res.json()),
+            fetch(PostsUrl).then(res => res.json())
+        ]);
+
+        posts = posts.map(post => {
+            const user = users.find(u => post.userId === u.id);
+            post.user = user;
+            return post;
+        });
+
+        posts.forEach(post => {
+            const postElement = document.createElement('li');
+            postElement.innerHTML = `
+                <h1>${post.title}</h1>
+                <h2>${post.body}</h2>
+                <p>${post.user?.name}</p>
+            `;
+            postselement.appendChild(postElement);
+        });
+
+    })();
+
+</script>
+
+</html>
